@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Shohoj Bazar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f9f7f2; --ink:#15211d; --muted:#66716a;
+    --primary:#0e5f48; --primary-dark:#0a4835;
+    --accent:#b3872f; --accent-soft:#f0e6d0;
+    --line:#e7e2d7; --card:#ffffff; --danger:#a5382f;
+    --shadow:0 18px 40px -24px rgba(20,33,29,.45); --radius:16px;
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *,*::before,*::after{box-sizing:inherit}
+  html{scroll-padding-top:env(safe-area-inset-top,0px)}
+  body{margin:0;font-family:Inter,system-ui,sans-serif;color:var(--ink);background:var(--paper);line-height:1.55;-webkit-font-smoothing:antialiased}
+  h1,h2,h3{font-family:Fraunces,Georgia,serif;margin:0;line-height:1.02;letter-spacing:-.01em}
+  a{color:inherit} img{max-width:100%;display:block} button{font-family:inherit;cursor:pointer}
+  ::selection{background:var(--accent-soft)}
+
+  header{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:rgba(249,247,242,.82);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  .bar{max-width:1180px;margin:0 auto;padding:14px 22px;display:flex;align-items:center;gap:16px}
+  .brand{display:flex;align-items:center;gap:11px;font-family:Fraunces;font-weight:600;font-size:22px}
+  .logo{width:34px;height:34px;border-radius:10px;background:var(--primary);color:#fff;display:grid;place-items:center;font-family:Fraunces;font-size:18px;font-weight:600;box-shadow:inset 0 0 0 1px #ffffff22}
+  .brand small{display:block;font-family:Inter;font-weight:500;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-top:1px}
+  .bar .spacer{flex:1}
+  .navbtn{background:none;border:none;color:var(--ink);font-size:14px;font-weight:500;padding:9px 12px;border-radius:10px;transition:background .18s}
+  .navbtn:hover{background:#0e5f4812}
+  .cartbtn{background:var(--ink);color:#fff;border:none;border-radius:999px;padding:10px 18px;font-weight:600;font-size:14px;display:flex;align-items:center;gap:9px;transition:transform .18s}
+  .cartbtn:hover{transform:translateY(-1px)}
+  .cartcount{background:var(--accent);color:#2a1e05;min-width:21px;height:21px;border-radius:999px;font-size:12px;font-weight:700;display:grid;place-items:center;padding:0 6px}
+
+  main{max-width:1180px;margin:0 auto;padding:22px}
+  .view{display:none}.view.active{display:block}
+
+  .slider{position:relative;border-radius:22px;overflow:hidden;background:#0d1a16;box-shadow:var(--shadow);margin-top:6px}
+  .slides{display:flex;transition:transform .7s cubic-bezier(.65,.05,.2,1);height:clamp(360px,56vw,540px)}
+  .slide{min-width:100%;position:relative;display:flex;align-items:flex-end}
+  .slide .pic{position:absolute;inset:0;background-size:cover;background-position:center;transform:scale(1.04)}
+  .slide::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,20,16,.82) 0%,rgba(10,20,16,.5) 42%,rgba(10,20,16,.05) 75%)}
+  .slide .caption{position:relative;z-index:2;color:#fff;padding:clamp(22px,5vw,52px);max-width:620px}
+  .slide .kicker{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#f2dfae;background:#ffffff14;border:1px solid #ffffff2b;padding:6px 12px;border-radius:999px;margin-bottom:16px}
+  .slide h2{font-size:clamp(30px,5.5vw,54px);font-weight:600;letter-spacing:-.02em}
+  .slide .sprice{font-family:Fraunces;font-size:clamp(20px,3vw,26px);color:#f4e3ba;margin:14px 0 22px}
+  .slide .sactions{display:flex;gap:12px;flex-wrap:wrap}
+  .btn-gold{background:var(--accent);color:#22190a;border:none;border-radius:12px;padding:13px 24px;font-weight:700;font-size:15px;transition:transform .18s;box-shadow:0 10px 24px -12px rgba(179,135,47,.9)}
+  .btn-gold:hover{transform:translateY(-2px)}
+  .btn-line{background:#ffffff14;color:#fff;border:1px solid #ffffff3d;border-radius:12px;padding:13px 22px;font-weight:600;font-size:15px;backdrop-filter:blur(4px);transition:background .18s}
+  .btn-line:hover{background:#ffffff26}
+  .arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:3;width:46px;height:46px;border-radius:999px;border:1px solid #ffffff3d;background:#0d1a1655;color:#fff;font-size:20px;display:grid;place-items:center;backdrop-filter:blur(6px);transition:background .18s}
+  .arrow:hover{background:#0d1a16aa}
+  .arrow.prev{left:16px}.arrow.next{right:16px}
+  .dots{position:absolute;z-index:3;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:8px}
+  .dot{width:8px;height:8px;border-radius:999px;background:#ffffff66;border:none;padding:0;transition:width .25s,background .25s}
+  .dot.on{width:26px;background:var(--accent)}
+  @media(max-width:640px){.arrow{display:none}}
+
+  .shophead{display:flex;align-items:flex-end;justify-content:space-between;margin:40px 4px 0}
+  .shophead h2{font-size:30px;font-weight:600}
+  .shophead .sub{color:var(--muted);font-size:14px;margin-top:4px}
+  .shophead .count{color:var(--accent);font-size:13px;font-weight:600}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:22px;margin-top:22px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;transition:transform .22s,box-shadow .22s;text-align:left}
+  .card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+  .card .thumb{aspect-ratio:4/5;width:100%;border:none;padding:0;cursor:pointer;background:#efe9dd;overflow:hidden}
+  .card .thumb span{display:block;width:100%;height:100%;background-size:cover;background-position:center;transition:transform .5s}
+  .card:hover .thumb span{transform:scale(1.06)}
+  .card .body{padding:15px 16px 17px;display:flex;flex-direction:column;gap:5px;flex:1}
+  .card .cat{color:var(--accent);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em}
+  .card .name{font-family:Fraunces;font-weight:600;font-size:18px;cursor:pointer;line-height:1.15}
+  .card .price{font-family:Fraunces;font-weight:600;font-size:19px;margin-top:2px}
+  .card .oos{color:var(--danger);font-size:12px;font-weight:600}
+  .add{margin-top:12px;background:var(--primary);color:#fff;border:none;border-radius:11px;padding:11px;font-weight:600;font-size:14px;transition:background .18s}
+  .add:hover{background:var(--primary-dark)}
+  .add:disabled{background:#b8bdb9;cursor:not-allowed}
+
+  .backlink{background:none;border:none;color:var(--muted);font-size:14px;font-weight:500;padding:8px 0;margin-bottom:6px}
+  .backlink:hover{color:var(--ink)}
+  .detail{display:grid;grid-template-columns:1fr;gap:30px;max-width:960px}
+  @media(min-width:720px){.detail{grid-template-columns:1.05fr 1fr;align-items:start}}
+  .detail .dimg{aspect-ratio:4/5;background:#efe9dd center/cover no-repeat;border-radius:20px;border:1px solid var(--line);box-shadow:var(--shadow)}
+  .detail .dcat{color:var(--accent);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em}
+  .detail h2{font-size:clamp(30px,5vw,42px);font-weight:600;margin-top:10px}
+  .detail .dprice{font-family:Fraunces;font-weight:600;font-size:28px;margin:16px 0;color:var(--primary)}
+  .detail p{color:var(--muted);font-size:16px;line-height:1.7}
+  .detail .buy{max-width:320px;margin-top:22px}
+
+  .panel{max-width:640px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px;box-shadow:var(--shadow)}
+  h2.page{font-size:34px;font-weight:600;margin:8px 4px 8px}
+  .pagesub{color:var(--muted);font-size:15px;margin:0 4px 22px}
+  .row{display:flex;align-items:center;gap:14px;padding:15px 0;border-bottom:1px solid var(--line)}
+  .row:last-of-type{border-bottom:none}
+  .row .rn{flex:1;font-family:Fraunces;font-weight:600;font-size:17px}
+  .row .rp{color:var(--muted);font-size:13px;font-family:Inter;font-weight:500}
+  .qty{display:flex;align-items:center;gap:10px}
+  .qty button{width:32px;height:32px;border-radius:9px;border:1px solid var(--line);background:var(--paper);font-weight:700;font-size:17px;line-height:1;transition:border-color .18s}
+  .qty button:hover{border-color:var(--accent)}
+  .total{display:flex;justify-content:space-between;align-items:center;font-family:Fraunces;font-weight:600;font-size:22px;margin-top:20px;padding-top:18px;border-top:2px solid var(--ink)}
+  label{display:block;font-size:13px;font-weight:600;margin:16px 0 7px}
+  input,textarea,select{width:100%;padding:13px 15px;border:1px solid var(--line);border-radius:12px;background:var(--paper);font-family:inherit;font-size:15px;color:var(--ink);transition:border-color .18s,box-shadow .18s}
+  input:focus,textarea:focus,select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px #0e5f4820}
+  textarea{min-height:92px;resize:vertical}
+  .cta{width:100%;background:var(--primary);color:#fff;border:none;border-radius:13px;padding:15px;font-weight:700;font-size:16px;margin-top:22px;transition:background .18s,transform .18s}
+  .cta:hover{background:var(--primary-dark);transform:translateY(-1px)}
+  .ghost{background:none;border:1px solid var(--line);color:var(--ink);border-radius:13px;padding:13px;font-weight:600;width:100%;margin-top:11px;transition:border-color .18s}
+  .ghost:hover{border-color:var(--accent)}
+  .note{color:var(--muted);font-size:13px;margin-top:14px}
+  .msg{padding:12px 15px;border-radius:11px;font-size:14px;font-weight:500;margin-top:16px;display:none}
+  .msg.err{display:block;background:#a5382f14;color:var(--danger)}
+  .msg.ok{display:block;background:#0e5f4814;color:var(--primary)}
+  .empty{text-align:center;color:var(--muted);padding:60px 16px}
+  .empty h3{font-family:Fraunces;font-size:24px;font-weight:600;color:var(--ink);margin-bottom:10px}
+
+  .tabs{display:flex;gap:9px;margin:4px 4px 22px}
+  .tab{background:none;border:1px solid var(--line);border-radius:999px;padding:9px 18px;font-weight:600;font-size:14px;transition:all .18s}
+  .tab.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .subpanel{display:none}.subpanel.on{display:block}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:left;padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+  .twrap{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:8px 16px;box-shadow:var(--shadow)}
+  .mini{padding:7px 12px;font-size:13px;border-radius:9px;border:1px solid var(--line);background:var(--paper);font-weight:600;margin-right:7px;transition:border-color .18s}
+  .mini:hover{border-color:var(--accent)}
+  .mini.del{color:var(--danger);border-color:#a5382f44}
+  .checkline{display:flex;align-items:center;gap:11px;margin-top:18px;font-weight:500}
+  .checkline input{width:auto}
+
+  footer{max-width:1180px;margin:40px auto 34px;padding:22px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+  footer .fbrand{font-family:Fraunces;font-weight:600;color:var(--ink)}
+  .spin{display:inline-block;width:16px;height:16px;border:2px solid #ffffff66;border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;vertical-align:-3px}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="bar">
+    <div class="brand"><span class="logo">শ</span><span>Shohoj Bazar<small>Dhaka · Cash on delivery</small></span></div>
+    <div class="spacer"></div>
+    <button class="navbtn" onclick="go('home')">Shop</button>
+    <button class="navbtn" id="accountBtn" onclick="accountClick()">Log in</button>
+    <button class="navbtn" id="adminNav" style="display:none" onclick="go('admin')">Admin</button>
+    <button class="cartbtn" onclick="go('cart')">Cart <span class="cartcount" id="cartCount">0</span></button>
+  </div>
+</header>
+
+<main>
+  <section id="home" class="view active">
+    <div class="slider" id="slider">
+      <div class="slides" id="slides"></div>
+      <button class="arrow prev" onclick="slidePrev()" aria-label="Previous">&#8249;</button>
+      <button class="arrow next" onclick="slideNext()" aria-label="Next">&#8250;</button>
+      <div class="dots" id="dots"></div>
+    </div>
+    <div class="shophead">
+      <div><h2>The collection</h2><div class="sub">Handpicked goods, delivered to your door across Dhaka.</div></div>
+      <span class="count" id="prodMeta">Loading&hellip;</span>
+    </div>
+    <div class="grid" id="productGrid"></div>
+  </section>
+
+  <section id="detail" class="view">
+    <button class="backlink" onclick="go('home')">&larr; Back to shop</button>
+    <div class="detail" id="detailBody"></div>
+  </section>
+
+  <section id="cart" class="view">
+    <h2 class="page">Your cart</h2>
+    <div class="panel" id="cartBody"></div>
+  </section>
+
+  <section id="checkout" class="view">
+    <h2 class="page">Checkout</h2>
+    <p class="pagesub">Cash on delivery. Pay when your parcel arrives.</p>
+    <div class="panel">
+      <label>Full name</label><input id="coName" placeholder="Your name" />
+      <label>Phone number</label><input id="coPhone" inputmode="tel" placeholder="01XXXXXXXXX" />
+      <label>Area</label><input id="coArea" placeholder="e.g. Dhanmondi, Mirpur, Uttara" />
+      <label>Full delivery address</label><textarea id="coAddress" placeholder="House, road, block, area, Dhaka"></textarea>
+      <div class="total"><span>Total to pay in cash</span><span id="coTotal">৳0</span></div>
+      <div class="msg" id="coMsg"></div>
+      <button class="cta" id="coBtn" onclick="placeOrder()">Place order · Pay on delivery</button>
+      <p class="note">Delivery available inside Dhaka. We will call to confirm before shipping.</p>
+    </div>
+  </section>
+
+  <section id="done" class="view">
+    <div class="empty">
+      <h3>Order received</h3>
+      <p>Thank you. We will call you shortly to confirm your cash-on-delivery order.</p>
+      <button class="cta" style="max-width:280px;margin:22px auto 0" onclick="go('home')">Continue shopping</button>
+    </div>
+  </section>
+
+  <section id="login" class="view">
+    <h2 class="page">Welcome back</h2>
+    <p class="pagesub">Log in to place your order.</p>
+    <div class="panel">
+      <label>Email</label><input id="liEmail" type="email" placeholder="you@example.com" />
+      <label>Password</label><input id="liPass" type="password" placeholder="Your password" />
+      <div class="msg" id="liMsg"></div>
+      <button class="cta" id="liBtn" onclick="login()">Log in</button>
+      <button class="ghost" onclick="go('register')">Create an account</button>
+    </div>
+  </section>
+
+  <section id="register" class="view">
+    <h2 class="page">Create account</h2>
+    <p class="pagesub">Join to shop and track your orders.</p>
+    <div class="panel">
+      <label>Email</label><input id="rgEmail" type="email" placeholder="you@example.com" />
+      <label>Password</label><input id="rgPass" type="password" placeholder="Choose a password" />
+      <div class="msg" id="rgMsg"></div>
+      <button class="cta" id="rgBtn" onclick="register()">Create account</button>
+      <button class="ghost" onclick="go('login')">I already have an account</button>
+    </div>
+  </section>
+
+  <section id="admin" class="view">
+    <h2 class="page">Admin</h2>
+    <p class="pagesub">Manage products and view orders.</p>
+    <div class="tabs">
+      <button class="tab on" id="tabProducts" onclick="adminTab('products')">Products</button>
+      <button class="tab" id="tabOrders" onclick="adminTab('orders')">Orders</button>
+    </div>
+    <div class="subpanel on" id="subProducts">
+      <div class="panel" style="margin-bottom:20px">
+        <h3 style="font-family:Fraunces;font-size:22px;font-weight:600;margin-bottom:2px" id="pfTitle">Add a product</h3>
+        <input type="hidden" id="pfId" />
+        <label>Name</label><input id="pfName" placeholder="Product name" />
+        <label>Price (Taka)</label><input id="pfPrice" inputmode="numeric" placeholder="e.g. 1250" />
+        <label>Category</label><input id="pfCategory" placeholder="e.g. Home, Fashion, Grocery" />
+        <label>Image URL</label><input id="pfImage" placeholder="https://... (paste a photo link)" />
+        <label>Description</label><textarea id="pfDesc" placeholder="Short description"></textarea>
+        <label class="checkline"><input type="checkbox" id="pfStock" checked /> In stock</label>
+        <div class="msg" id="pfMsg"></div>
+        <button class="cta" id="pfBtn" onclick="saveProduct()">Add product</button>
+        <button class="ghost" id="pfCancel" style="display:none" onclick="resetProductForm()">Cancel edit</button>
+      </div>
+      <div class="twrap">
+        <table><thead><tr><th>Product</th><th>Price</th><th>Stock</th><th></th></tr></thead>
+        <tbody id="adminProducts"></tbody></table>
+      </div>
+    </div>
+    <div class="subpanel" id="subOrders">
+      <div class="twrap">
+        <table><thead><tr><th>Time</th><th>Name</th><th>Phone</th><th>Area</th><th>Items</th><th>Total</th></tr></thead>
+        <tbody id="adminOrders"></tbody></table>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span class="fbrand">Shohoj Bazar</span>
+  <span>Cash on delivery · Dhaka · A test store</span>
+</footer>
+
+<script>
+/* ============================================================
+   CONFIG  ->  paste your Google Apps Script /exec URL here
+   ============================================================ */
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxn86MrELNCXs1ahXX0hO8W2AbCbG4i6Jf6iNDjCfZl1ntkJRSaSakingW9XwHYzuZn5A/exec"; // e.g. "https://script.google.com/macros/s/AKfy.../exec"
+
+let PRODUCTS = [];
+let CART = JSON.parse(localStorage.getItem("cart") || "[]");
+let SESSION = JSON.parse(localStorage.getItem("session") || "null");
+
+/* JSONP helper (reads AND writes, no CORS trouble) */
+function api(params){
+  return new Promise((resolve,reject)=>{
+    if(!SCRIPT_URL){ reject(new Error("SCRIPT_URL is not set")); return; }
+    const cb = "cb_" + Math.random().toString(36).slice(2);
+    const s = document.createElement("script");
+    const timer = setTimeout(()=>{ cleanup(); reject(new Error("Request timed out")); }, 15000);
+    function cleanup(){ clearTimeout(timer); delete window[cb]; s.remove(); }
+    window[cb] = (data)=>{ cleanup(); resolve(data); };
+    s.onerror = ()=>{ cleanup(); reject(new Error("Network error")); };
+    const q = new URLSearchParams(Object.assign({}, params, {callback:cb})).toString();
+    s.src = SCRIPT_URL + "?" + q;
+    document.body.appendChild(s);
+  });
+}
+async function sha256(text){
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,"0")).join("");
+}
+function go(id){
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  window.scrollTo(0,0);
+  if(id==="cart") renderCart();
+  if(id==="checkout") renderCheckout();
+  if(id==="admin") openAdmin();
+}
+const taka = n => "৳" + Number(n||0).toLocaleString("en-US");
+const inStock = p => String(p.inStock).toLowerCase() !== "false";
+
+async function loadProducts(){
+  const meta = document.getElementById("prodMeta");
+  try{
+    const res = await api({action:"getProducts"});
+    PRODUCTS = (res.products || []).filter(p=>p.name);
+    renderProducts(); buildSlider();
+    meta.textContent = PRODUCTS.length + " item" + (PRODUCTS.length===1?"":"s");
+  }catch(err){
+    meta.textContent = "";
+    document.getElementById("productGrid").innerHTML =
+      '<div class="empty"><h3>Could not load products</h3><p>Check that SCRIPT_URL is set and the sheet is shared. ('+err.message+')</p></div>';
+  }
+}
+function renderProducts(){
+  const grid = document.getElementById("productGrid");
+  if(!PRODUCTS.length){ grid.innerHTML = '<div class="empty"><h3>No products yet</h3><p>Add products from the admin panel.</p></div>'; return; }
+  grid.innerHTML = PRODUCTS.map(p=>`
+    <div class="card">
+      <button class="thumb" onclick="openDetail('${p.id}')" aria-label="${esc(p.name)}"><span style="background-image:url('${esc(p.image)}')"></span></button>
+      <div class="body">
+        ${p.category?`<span class="cat">${esc(p.category)}</span>`:""}
+        <span class="name" onclick="openDetail('${p.id}')">${esc(p.name)}</span>
+        <span class="price">${taka(p.price)}</span>
+        ${inStock(p)?`<button class="add" onclick="addToCart('${p.id}')">Add to cart</button>`:`<span class="oos">Out of stock</span>`}
+      </div></div>`).join("");
+}
+
+/* hero slider (featured = newest in-stock) */
+let SLIDE_I=0, SLIDE_TIMER=null, SLIDES=[];
+function buildSlider(){
+  const wrap=document.getElementById("slides"), dots=document.getElementById("dots");
+  SLIDES = PRODUCTS.filter(inStock).slice().reverse().slice(0,6);
+  if(!SLIDES.length) SLIDES = PRODUCTS.slice(0,6);
+  if(!SLIDES.length){
+    wrap.innerHTML=`<div class="slide"><div class="pic" style="background:linear-gradient(120deg,#0e5f48,#0a2e24)"></div>
+      <div class="caption"><span class="kicker">Delivery inside Dhaka</span>
+      <h2>Everyday goods, paid for at your door.</h2>
+      <div class="sprice">Add products in admin to feature them here</div></div></div>`;
+    dots.innerHTML=""; return;
+  }
+  wrap.innerHTML = SLIDES.map(p=>`
+    <div class="slide">
+      <div class="pic" style="background-image:url('${esc(p.image)}')"></div>
+      <div class="caption">
+        <span class="kicker">${p.category?esc(p.category):"Featured"}</span>
+        <h2>${esc(p.name)}</h2>
+        <div class="sprice">${taka(p.price)}</div>
+        <div class="sactions">
+          <button class="btn-gold" onclick="addToCart('${p.id}');go('cart')">Add to cart</button>
+          <button class="btn-line" onclick="openDetail('${p.id}')">View details</button>
+        </div>
+      </div></div>`).join("");
+  dots.innerHTML = SLIDES.map((_,i)=>`<button class="dot ${i===0?'on':''}" onclick="goSlide(${i})" aria-label="Slide ${i+1}"></button>`).join("");
+  SLIDE_I=0; showSlide(); startAuto();
+}
+function showSlide(){
+  document.getElementById("slides").style.transform=`translateX(-${SLIDE_I*100}%)`;
+  document.querySelectorAll("#dots .dot").forEach((d,i)=>d.classList.toggle("on",i===SLIDE_I));
+}
+function goSlide(i){ SLIDE_I=(i+SLIDES.length)%SLIDES.length; showSlide(); startAuto(); }
+function slideNext(){ goSlide(SLIDE_I+1); }
+function slidePrev(){ goSlide(SLIDE_I-1); }
+function startAuto(){ clearInterval(SLIDE_TIMER); if(SLIDES.length>1) SLIDE_TIMER=setInterval(()=>goSlide(SLIDE_I+1),5000); }
+(function(){
+  const el=document.getElementById("slider");
+  el.addEventListener("mouseenter",()=>clearInterval(SLIDE_TIMER));
+  el.addEventListener("mouseleave",startAuto);
+  let x0=null;
+  el.addEventListener("touchstart",e=>x0=e.touches[0].clientX,{passive:true});
+  el.addEventListener("touchend",e=>{ if(x0===null)return; const dx=e.changedTouches[0].clientX-x0; if(dx<-40)slideNext(); else if(dx>40)slidePrev(); x0=null; });
+})();
+
+function openDetail(id){
+  const p = PRODUCTS.find(x=>String(x.id)===String(id)); if(!p) return;
+  document.getElementById("detailBody").innerHTML=`
+    <div class="dimg" style="background-image:url('${esc(p.image)}')"></div>
+    <div>
+      ${p.category?`<span class="dcat">${esc(p.category)}</span>`:""}
+      <h2>${esc(p.name)}</h2>
+      <div class="dprice">${taka(p.price)}</div>
+      <p>${esc(p.description||"")}</p>
+      ${inStock(p)?`<button class="cta buy" onclick="addToCart('${p.id}');go('cart')">Add to cart</button>`:`<p class="oos" style="color:var(--danger);font-weight:600;margin-top:18px">Out of stock</p>`}
+    </div>`;
+  go("detail");
+}
+
+function saveCart(){ localStorage.setItem("cart", JSON.stringify(CART)); updateCartCount(); }
+function updateCartCount(){ document.getElementById("cartCount").textContent = CART.reduce((n,i)=>n+i.qty,0); }
+function addToCart(id){
+  const p = PRODUCTS.find(x=>String(x.id)===String(id)); if(!p) return;
+  const line = CART.find(i=>String(i.id)===String(id));
+  if(line) line.qty++; else CART.push({id:p.id, name:p.name, price:Number(p.price), qty:1});
+  saveCart();
+}
+function changeQty(id,d){
+  const line = CART.find(i=>String(i.id)===String(id)); if(!line) return;
+  line.qty += d; if(line.qty<=0) CART = CART.filter(i=>String(i.id)!==String(id));
+  saveCart(); renderCart();
+}
+function cartTotal(){ return CART.reduce((s,i)=>s+i.price*i.qty,0); }
+function renderCart(){
+  const box = document.getElementById("cartBody");
+  if(!CART.length){ box.innerHTML='<div class="empty"><h3>Your cart is empty</h3><p>Browse the collection and add something you like.</p><button class="cta" style="max-width:240px;margin:20px auto 0" onclick="go(\'home\')">Go to shop</button></div>'; return; }
+  box.innerHTML = CART.map(i=>`
+    <div class="row">
+      <div class="rn">${esc(i.name)}<div class="rp">${taka(i.price)}</div></div>
+      <div class="qty"><button onclick="changeQty('${i.id}',-1)">&minus;</button><span>${i.qty}</span><button onclick="changeQty('${i.id}',1)">+</button></div>
+    </div>`).join("")
+    + `<div class="total"><span>Total</span><span>${taka(cartTotal())}</span></div><button class="cta" onclick="go('checkout')">Checkout</button>`;
+}
+
+function renderCheckout(){ document.getElementById("coTotal").textContent = taka(cartTotal()); }
+async function placeOrder(){
+  const name=val("coName"), phone=val("coPhone"), area=val("coArea"), address=val("coAddress");
+  const msg=document.getElementById("coMsg"), btn=document.getElementById("coBtn");
+  msg.className="msg";
+  if(!CART.length){ show(msg,"err","Your cart is empty."); return; }
+  if(!name||!phone||!area||!address){ show(msg,"err","Please fill in every field."); return; }
+  const items = CART.map(i=>`${i.name} x ${i.qty}`).join(", ");
+  btn.disabled=true; btn.innerHTML='<span class="spin"></span>';
+  try{
+    await api({action:"placeOrder", name, phone, area, address, items, total:cartTotal()});
+    CART=[]; saveCart(); go("done");
+  }catch(err){ show(msg,"err","Could not send your order. "+err.message); }
+  finally{ btn.disabled=false; btn.textContent="Place order · Pay on delivery"; }
+}
+
+function accountClick(){ if(SESSION) logout(); else go("login"); }
+function applySession(){
+  document.getElementById("adminNav").style.display = (SESSION && SESSION.role==="admin") ? "" : "none";
+  document.getElementById("accountBtn").textContent = SESSION ? "Log out" : "Log in";
+}
+function logout(){ SESSION=null; localStorage.removeItem("session"); applySession(); go("home"); }
+async function register(){
+  const email=val("rgEmail").trim().toLowerCase(), pass=val("rgPass");
+  const msg=document.getElementById("rgMsg"), btn=document.getElementById("rgBtn");
+  msg.className="msg";
+  if(!email||!pass){ show(msg,"err","Enter an email and password."); return; }
+  btn.disabled=true; btn.innerHTML='<span class="spin"></span>';
+  try{
+    const hash = await sha256(pass);
+    const res = await api({action:"register", email, hash});
+    if(res.success){ SESSION={email, role:res.role||"customer"}; localStorage.setItem("session",JSON.stringify(SESSION)); applySession(); go("home"); }
+    else show(msg,"err", res.message || "That email is already registered.");
+  }catch(err){ show(msg,"err","Something went wrong. "+err.message); }
+  finally{ btn.disabled=false; btn.textContent="Create account"; }
+}
+async function login(){
+  const email=val("liEmail").trim().toLowerCase(), pass=val("liPass");
+  const msg=document.getElementById("liMsg"), btn=document.getElementById("liBtn");
+  msg.className="msg";
+  if(!email||!pass){ show(msg,"err","Enter your email and password."); return; }
+  btn.disabled=true; btn.innerHTML='<span class="spin"></span>';
+  try{
+    const hash = await sha256(pass);
+    const res = await api({action:"login", email, hash});
+    if(res.success){ SESSION={email, role:res.role}; localStorage.setItem("session",JSON.stringify(SESSION)); applySession(); go(res.role==="admin"?"admin":"home"); }
+    else show(msg,"err","Wrong email or password.");
+  }catch(err){ show(msg,"err","Something went wrong. "+err.message); }
+  finally{ btn.disabled=false; btn.textContent="Log in"; }
+}
+
+function openAdmin(){
+  if(!SESSION || SESSION.role!=="admin"){ go("login"); return; }
+  adminTab("products"); loadAdminProducts(); loadAdminOrders();
+}
+function adminTab(which){
+  document.getElementById("tabProducts").classList.toggle("on", which==="products");
+  document.getElementById("tabOrders").classList.toggle("on", which==="orders");
+  document.getElementById("subProducts").classList.toggle("on", which==="products");
+  document.getElementById("subOrders").classList.toggle("on", which==="orders");
+}
+async function loadAdminProducts(){
+  const body=document.getElementById("adminProducts");
+  body.innerHTML='<tr><td colspan="4" style="color:var(--muted)">Loading…</td></tr>';
+  try{
+    const res=await api({action:"getProducts"});
+    PRODUCTS=(res.products||[]).filter(p=>p.name);
+    body.innerHTML = PRODUCTS.length ? PRODUCTS.map(p=>`
+      <tr>
+        <td style="font-family:Fraunces;font-weight:600">${esc(p.name)}${p.category?`<div style="color:var(--muted);font-size:12px;font-family:Inter;font-weight:400">${esc(p.category)}</div>`:""}</td>
+        <td>${taka(p.price)}</td>
+        <td>${inStock(p)?"Yes":"No"}</td>
+        <td style="white-space:nowrap">
+          <button class="mini" onclick="editProduct('${p.id}')">Edit</button>
+          <button class="mini del" onclick="deleteProduct('${p.id}')">Delete</button>
+        </td>
+      </tr>`).join("") : '<tr><td colspan="4" style="color:var(--muted)">No products yet.</td></tr>';
+  }catch(err){ body.innerHTML='<tr><td colspan="4" style="color:var(--danger)">'+err.message+'</td></tr>'; }
+}
+async function loadAdminOrders(){
+  const body=document.getElementById("adminOrders");
+  body.innerHTML='<tr><td colspan="6" style="color:var(--muted)">Loading…</td></tr>';
+  try{
+    const res=await api({action:"getOrders"});
+    const orders=res.orders||[];
+    body.innerHTML = orders.length ? orders.slice().reverse().map(o=>`
+      <tr>
+        <td style="white-space:nowrap">${esc(o.timestamp||"")}</td>
+        <td>${esc(o.name||"")}</td>
+        <td>${esc(o.phone||"")}</td>
+        <td>${esc(o.area||"")}</td>
+        <td>${esc(o.items||"")}<div style="color:var(--muted);font-size:12px">${esc(o.address||"")}</div></td>
+        <td style="white-space:nowrap">${taka(o.total)}</td>
+      </tr>`).join("") : '<tr><td colspan="6" style="color:var(--muted)">No orders yet.</td></tr>';
+  }catch(err){ body.innerHTML='<tr><td colspan="6" style="color:var(--danger)">'+err.message+'</td></tr>'; }
+}
+function editProduct(id){
+  const p=PRODUCTS.find(x=>String(x.id)===String(id)); if(!p) return;
+  setVal("pfId",p.id); setVal("pfName",p.name); setVal("pfPrice",p.price);
+  setVal("pfCategory",p.category||""); setVal("pfImage",p.image||""); setVal("pfDesc",p.description||"");
+  document.getElementById("pfStock").checked = inStock(p);
+  document.getElementById("pfTitle").textContent="Edit product";
+  document.getElementById("pfBtn").textContent="Save changes";
+  document.getElementById("pfCancel").style.display="block";
+  window.scrollTo(0,0);
+}
+function resetProductForm(){
+  ["pfId","pfName","pfPrice","pfCategory","pfImage","pfDesc"].forEach(i=>setVal(i,""));
+  document.getElementById("pfStock").checked=true;
+  document.getElementById("pfTitle").textContent="Add a product";
+  document.getElementById("pfBtn").textContent="Add product";
+  document.getElementById("pfCancel").style.display="none";
+  document.getElementById("pfMsg").className="msg";
+}
+async function saveProduct(){
+  const id=val("pfId"), name=val("pfName"), price=val("pfPrice");
+  const msg=document.getElementById("pfMsg"), btn=document.getElementById("pfBtn");
+  msg.className="msg";
+  if(!name||!price){ show(msg,"err","Name and price are required."); return; }
+  const p={ action: id?"updateProduct":"addProduct", id, name, price,
+    category:val("pfCategory"), image:val("pfImage"), description:val("pfDesc"),
+    inStock:document.getElementById("pfStock").checked };
+  btn.disabled=true; btn.innerHTML='<span class="spin"></span>';
+  try{
+    await api(p);
+    show(msg,"ok", id?"Product updated.":"Product added.");
+    resetProductForm(); loadAdminProducts();
+  }catch(err){ show(msg,"err","Could not save. "+err.message); }
+  finally{ btn.disabled=false; btn.textContent = id?"Save changes":"Add product"; }
+}
+async function deleteProduct(id){
+  if(!confirm("Delete this product?")) return;
+  try{ await api({action:"deleteProduct", id}); loadAdminProducts(); }
+  catch(err){ alert("Could not delete. "+err.message); }
+}
+
+function val(id){ return document.getElementById(id).value; }
+function setVal(id,v){ document.getElementById(id).value=v; }
+function show(el,kind,text){ el.className="msg "+kind; el.textContent=text; }
+function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+applySession();
+updateCartCount();
+loadProducts();
+</script>
+<!-- Chatbase chat widget -->
+<script>
+(function(){if(!window.chatbase||window.chatbase("getState")!=="initialized"){window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)};window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}})}const onLoad=function(){const script=document.createElement("script");script.src="https://www.chatbase.co/embed.min.js";script.id="V30wv2-cgS8_30ZmsNGy0";script.domain="www.chatbase.co";document.body.appendChild(script)};if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)}})();
+</script>
+</body>
+</html>
